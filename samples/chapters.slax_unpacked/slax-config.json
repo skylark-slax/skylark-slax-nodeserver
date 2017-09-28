@@ -1,11 +1,11 @@
 {
-    "baseUrl" : "/",
     "name" : "chaptersApp", 
     "title": "A exmaple with navbar and a welcome view and three chapter views",
+    "baseUrl": "/",
 
     "page" : {
-		  "routeViewer" : "#yield"
-	  },
+		"routeViewer" : "#yield"
+	},
     "plugins" : {
       "highlight" : {
       	  "hookers": "routed",
