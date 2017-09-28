@@ -1,10 +1,14 @@
 {
-  "name": "skylark-server",
+  "name": "skylark-slax-nodeserver",
   "version": "0.9.0",
   "description": "The node server for running the skylark slax application",
-  "scripts": {
-    "start": "node ./src/server.js"
+  "bin": {
+    "slaxserv" : "./bin/cli.js"
   },
+  "scripts": {
+    "start": "node ./bin/cli.js"
+  },
+  "main" : "server.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/skylarkjs/skylark-server-node.git"
