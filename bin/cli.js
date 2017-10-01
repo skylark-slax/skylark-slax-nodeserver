@@ -23,7 +23,8 @@ initTerminateHandlers();
 
 program
   .version(pkg.name + '@' + pkg.version)
-  .usage('[options] <root_path>')
+  .usage('[options]')
+  .option('-r, --root <n>', 'the root dicrectory to run')
   .option('-a, --slax <n>', 'the skylark slax application file name to run')
   .option('-p, --port <n>', 'the port to listen to for incoming HTTP connections', DEFAULT_PORT)
   .option('-d, --debug', 'enable to show error messages', DEFAULT_DEBUG)
