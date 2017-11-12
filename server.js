@@ -4,11 +4,34 @@ const express = require('express');
 const serveIndex = require('serve-index');
 const path = require('path');
 const del = require('del');
+const zipper  = require("zip-local");
 const fs = require('fs');
 const asar = require('asar');
 const replacestream = require('replacestream');
 
 exports = module.exports = SlaxServer;
+
+var extractSlaxFile = function(slaxFileName,slaxAppDir) {
+    function ensureAppDir() {
+        if (fs.existsSync(slaxAppDir)) {
+            del.sync([slaxAppDir + '/**/*'], {
+                force: true
+            });       
+            fs.rmdirSync(slaxAppDir);
+        }
+        fs.mkdirSync(slaxAppDir);
+    }
+
+    try {
+        ensureAppDir();
+        zipper.sync.unzip(slaxFileName).save(slaxAppDir);
+    } catch (e) {
+        console.log("The slax file is not a zipped file? extract as a asar file",e);
+        ensureAppDir();
+
+        asar.extractAll(slaxFileName,slaxAppDir);
+    }
+};
 
 function SlaxServer(options) {
   options = options || {};
@@ -67,13 +90,7 @@ SlaxServer.prototype.start = function start(callback) {
         let slaxAppName = path.parse(slaxFileName).name,
             slaxAppDir = self.cachePath+"/apps/" + slaxAppName;
 
-        if (fs.existsSync(slaxAppDir)) {
-            del.sync([slaxAppDir + '/**/*'], {
-                force: true
-            });       
-        }
-
-        asar.extractAll(path.resolve(slaxFileName),slaxAppDir);
+        extractSlaxFile(path.resolve(slaxFileName),slaxAppDir);
 
         let slaxAppConf = require("./.cache/apps/"+ slaxAppName + "/slax-config");
 
