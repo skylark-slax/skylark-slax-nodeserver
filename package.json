@@ -1,6 +1,6 @@
 {
   "name": "skylark-slax-nodeserver",
-  "version": "0.9.1-beta",
+  "version": "0.9.1",
   "description": "The node server for running the skylark slax application",
   "bin": {
     "slaxserv": "./bin/cli.js"
