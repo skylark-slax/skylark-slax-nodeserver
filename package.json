@@ -1,37 +1,38 @@
 {
-  "name": "skylark-slax-nodeserver",
-  "version": "0.9.1",
-  "description": "The node server for running the skylark slax application",
-  "bin": {
-    "slaxserv": "./bin/cli.js"
-  },
-  "scripts": {
-    "start": "node ./bin/cli.js"
-  },
-  "main": "server.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/skylarkjs/skylark-server-node.git"
-  },
-  "keywords": [
-    "skylark",
-    "slx",
-    "server"
-  ],
-  "author": "hudaokeji",
-  "license": "MIT",
-  "dependencies": {
-    "asar": "^0.13.0",
-    "chalk": "^0.5.1",
-    "cheerio": "^1.0.0-rc.2",
-    "commander": "^2.3.0",
-    "del": "^3.0.0",
-    "express": "^4.15.3",
-    "file-size": "0.0.5",
-    "mime": "^1.2.11",
-    "promise": "^8.0.1",
-    "replacestream": "^4.0.3",
-    "serve-index": "^1.9.0",
-    "zip-local": "^0.3.4"
-  }
+    "name": "skylark-slax-nodeserver",
+    "version": "0.9.2",
+    "description": "The node server for running the skylark slax application",
+    "bin": {
+        "slaxserv": "./bin/cli.js"
+    },
+    "scripts": {
+        "start": "node ./bin/cli.js"
+    },
+    "main": "server.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/skylarkjs/skylark-server-node.git"
+    },
+    "keywords": [
+        "skylark",
+        "slx",
+        "server"
+    ],
+    "author": "hudaokeji",
+    "license": "MIT",
+    "dependencies": {
+        "asar": "^0.13.0",
+        "chalk": "^0.5.1",
+        "cheerio": "^1.0.0-rc.2",
+        "commander": "^2.3.0",
+        "del": "^3.0.0",
+        "express": "^4.15.3",
+        "colors": "^1.1.2",
+        "file-size": "0.0.5",
+        "mime": "^1.2.11",
+        "promise": "^8.0.1",
+        "replacestream": "^4.0.3",
+        "serve-index": "^1.9.0",
+        "zip-local": "^0.3.4"
+    }
 }
