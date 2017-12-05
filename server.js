@@ -24,8 +24,6 @@ function extractSlaxFile(slaxFileName, slaxAppDir) {
     }
 
     ensureAppDir();
-    console.log(slaxFileName);
-    console.log(slaxAppDir);
     try {
         zipper.sync.unzip(slaxFileName).save(slaxAppDir);
     } catch (e) {
@@ -53,8 +51,8 @@ function SlaxServer(options) {
         writable: true,
         value: null
     });
+    this._express = options.express || express();
 }
-
 
 /**
 Start listening on the given host:port
@@ -97,12 +95,11 @@ SlaxServer.prototype.initSlaxApp = function(appPath, contextPath, routeMiddlewar
     });
 
     let handler = (req, res) => {
+        console.log(slaxAppDir);
         let html = path.join(slaxAppDir, "index.html");
         res.setHeader('content-type', 'text/html');
         let replacement = `</title><base href="${contextPath}/">`;
-
         fs.createReadStream(html).pipe(replacestream('</title>', replacement)).pipe(res);
-
     };
 
     let routes = [];
@@ -117,17 +114,18 @@ SlaxServer.prototype.initSlaxApp = function(appPath, contextPath, routeMiddlewar
         }
     }
 
-    self._express.get("", handler);
-
     routes.forEach(route => {
+        let _r = contextPath + route;
         if (routeMiddleware) {
-            self._express.get(contextPath + route, routeMiddleware, handler);
+            self._express.get(_r, routeMiddleware, handler);
         } else {
-            self._express.get(contextPath + route, handler);
+            self._express.get(_r, handler);
         }
     });
 
-    self._express.use(contextPath, express.static(slaxAppDir));
+    self._express.use(contextPath + "/lib", express.static(path.join(slaxAppDir, "lib")));
+    self._express.use(contextPath + "/assets", express.static(path.join(slaxAppDir, "assets")));
+    self._express.use(contextPath + "/scripts", express.static(path.join(slaxAppDir, "scripts")));
 
     return {
         "appPath": appPath,
@@ -137,16 +135,6 @@ SlaxServer.prototype.initSlaxApp = function(appPath, contextPath, routeMiddlewar
     };
 };
 SlaxServer.prototype.start = function start(callback) {
-
-    let express = require("express");
-
-    this._express = express();
-
-    if (this.root) {
-        this._express.use(express.static(path.resolve(this.root)));
-    }
-
-
     if (!this.slax && !this.slaxs && !this.slaxs.length) {
         console.warn("skylark application is not specified!");
         return;
@@ -166,6 +154,9 @@ SlaxServer.prototype.start = function start(callback) {
         slaxApps[slaxApp[1]] = self.initSlaxApp(slaxApp[0], slaxApp[1] || "");
     });
 
+    if (this.root) {
+        this._express.use(express.static(path.resolve(this.root)));
+    }
     var args = [];
     args.push(this.port);
     if (this.host) {
