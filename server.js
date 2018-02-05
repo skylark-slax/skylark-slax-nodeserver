@@ -15,20 +15,35 @@ const express = require('express'),
 
 exports = module.exports = SlaxServer;
 
-function extractSlaxFile(slaxFileName, slaxAppDir) {
-    function ensureAppDir() {
+function getUserHome() {
+  return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+}
+
+function ensureDir(dir) {
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+    }
+}
+
+var extractSlaxFile = function(slaxFileName,slaxAppDir) {
+    function initAppDir() {
         if (fs.existsSync(slaxAppDir)) {
-            rimraf.sync(slaxAppDir);
+            del.sync([slaxAppDir + '/**/*'], {
+                force: true
+            });       
+            fs.rmdirSync(slaxAppDir);
         }
-        mkdirp.sync(slaxAppDir);
+        fs.mkdirSync(slaxAppDir);
     }
 
-    ensureAppDir();
     try {
+        initAppDir();
         zipper.sync.unzip(slaxFileName).save(slaxAppDir);
     } catch (e) {
-        console.log("The slax file is not a zipped file? extract as a asar file", e);
-        asar.extractAll(slaxFileName, slaxAppDir);
+        console.log("The slax file is not a zipped file? extract as a asar file",e);
+        initAppDir();
+
+        asar.extractAll(slaxFileName,slaxAppDir);
     }
 };
 
@@ -39,7 +54,12 @@ function SlaxServer(options) {
     this.host = options.host;
     this.port = options.port;
     this.cors = options.cors;
-    this.cachePath = path.join(__dirname, './.cache');
+
+    this.cachePath = path.join(getUserHome(), '.slax');
+    ensureDir(this.cachePath);
+
+    this.appsPath = path.join(this.cachePath,"apps");
+    ensureDir(this.appsPath);
 
     this.slax = options.slax;
     this.slaxs = options.slaxs;
@@ -68,11 +88,11 @@ SlaxServer.prototype.initSlaxApp = function(appPath, contextPath, routeMiddlewar
     }
 
     let slaxAppName = path.parse(appPath).name,
-        slaxAppDir = self.cachePath + "/apps/" + slaxAppName;
+        slaxAppDir = path.join(self.appsPath,slaxAppName);
 
     extractSlaxFile(path.resolve(appPath), slaxAppDir);
 
-    let slaxAppConf = require("./.cache/apps/" + slaxAppName + "/slax-config");
+    let slaxAppConf = require(slaxAppDir+ "/slax-config");
 
     if (!slaxAppConf) {
         console.error(appPath + ": the slax-config.json is not found!");
